@@ -5,28 +5,22 @@ import {
   getTimeFromDateString,
   getStatusColor,
 } from "../utility";
+import useFlightApi from "../Apis";
 
 const FlightDetails = () => {
   const history = useNavigate();
   const [flightDetails, setFlightDetails] = useState([]);
-  const [error, setError] = useState(null); // State to store error information
+  const [errorApi, setErrorApi] = useState(null); // State to store error information
   const { id } = useParams();
 
+  const { data, error = null } = useFlightApi(
+    `https://flight-status-mock.core.travelopia.cloud/flights/${id}`
+  );
+
   useEffect(() => {
-    fetch(`https://flight-status-mock.core.travelopia.cloud/flights/${id}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setFlightDetails(data); // Handle the retrieved data here
-      })
-      .catch((error) => {
-        setError(error.message); // Store error message
-      });
-  }, [id]); // Include 'id' in dependency array to fetch data when 'id' changes
+    setFlightDetails(data);
+    setErrorApi(error);
+  }, [data, error]); // Include 'id' in dependency array to fetch data when 'id' changes
 
   const navigateFlightList = () => {
     history("/");
@@ -35,8 +29,8 @@ const FlightDetails = () => {
   return (
     <div className="bg-container">
       <div className="container-main">
-        {error ? (
-          <p>There was an error: {error}</p>
+        {errorApi ? (
+          <p>There was an error: {errorApi}</p>
         ) : (
           <div className="detailParent-container">
             {/* flight heading */}

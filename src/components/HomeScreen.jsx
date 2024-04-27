@@ -1,35 +1,59 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FlightList from "./FlightList";
+import useFlightApi from "../Apis";
 
 const HomeScreen = () => {
   const history = useNavigate();
 
   const [flightList, setFlightList] = useState([]);
   const [filteredFlights, setFilteredFlights] = useState([]);
-  const [error, setError] = useState(null); // State to store error information
+  const [errorApi, setError] = useState(null); // State to store error information
+  const [showLoading, setShowLoading] = useState(true);
+
+  const { data, loading, error } = useFlightApi(
+    "https://flight-status-mock.core.travelopia.cloud/flights"
+  );
+
+  useEffect(() => {
+    if (!loading) {
+      setFilteredFlights([...data]);
+      setError(error);
+      setShowLoading(loading);
+    }
+  }, [flightList, loading, error]);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(
+        "https://flight-status-mock.core.travelopia.cloud/flights"
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      setFilteredFlights([...data]);
+      setShowLoading(false);
+    } catch (error) {
+      setError(error.message);
+      setShowLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      // Fetch data every 30 seconds
+      fetchData();
+    }, 10000);
+
+    return () => clearInterval(intervalId); // Cleanup function to clear interval on component unmount
+  }, []);
 
   const handleFlightClick = (id) => {
     history(`/details/${id}`);
   };
 
   // Api call for list of flights
-  useEffect(() => {
-    fetch("https://flight-status-mock.core.travelopia.cloud/flights")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setFlightList(data);
-        setFilteredFlights(data);
-      })
-      .catch((error) => {
-        setError(error.message); // Store error message
-      });
-  }, []);
 
   const handleSearch = (value) => {
     if (value.trim() === "") {
@@ -42,6 +66,7 @@ const HomeScreen = () => {
         flight
     );
     setFilteredFlights([...filteredFlights]);
+    setShowLoading(false);
   };
 
   const listReload = () => {
@@ -63,9 +88,9 @@ const HomeScreen = () => {
           placeholder="Search for Airlines"
           id="searchInput"
         />
-        {error ? ( // Display error message if there's an error
+        {errorApi ? ( // Display error message if there's an error
           <div>
-            <p>There was an error: {error}</p>
+            <p>There was an error: {errorApi}</p>
           </div>
         ) : filteredFlights.length === 0 ? (
           <>
@@ -75,11 +100,13 @@ const HomeScreen = () => {
               className="noData-img"
             />
             <div className="noData-found">
-              <h2>No Data Found....</h2>
-              <img
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSy-U92_4HxzsNRM_LYgEtG_DJ2rCBFjKvgb1TzrDETfg&s"
-                alt="sad emoji"
-              />
+              <h2>{showLoading ? "Data Loading...." : "No Data Found...."} </h2>
+              {!showLoading && (
+                <img
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSy-U92_4HxzsNRM_LYgEtG_DJ2rCBFjKvgb1TzrDETfg&s"
+                  alt="sad emoji"
+                />
+              )}
             </div>
             <p onClick={listReload} className="reloadTxt">
               Back to flight list

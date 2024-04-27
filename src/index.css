@@ -1,13 +1,197 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+.bg-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.container-main {
+  max-width: 1440px;
+  width: 100%;
+  padding: 80px 80px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.travelopia-logo {
+  height: 50px;
+}
+
+.inputSearch {
+  width: 100%;
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid #c1c7cf;
+  padding: 15px;
+  background-color: #ffffff; /* Optional: Add a background color */
+  position: sticky; /* Change position to sticky */
+  top: 20px; /* Adjust this value as per your design */
+  z-index: 999;
+}
+
+.data-container {
+  background: #fff;
+  box-shadow: 0 0 0 0.0625rem #e0e4e9;
+  font-size: 0.75rem;
+  margin: 0.375rem 0;
+  border-radius: 5px;
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.data-container:hover {
+  background-color: #f5f5f5;
+  transform: scale(1.02);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.flight-entry-container {
+  display: flex;
+  align-items: center;
+  gap: 10%;
+}
+.flight-entry {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+.airline-title {
+  color: #626971;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  margin-right: 0.75rem;
+  width: max-content;
+}
+
+.flight-icon {
+  height: 20pxs;
+}
+
+.flight-no {
+  color: #626971;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+}
+.destination-txt {
+  color: #626971;
+  font-size: 1rem;
+  line-height: 1.75rem;
+}
+
+.flight-status {
+  color: #05203c;
+  display: inline-block;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  text-align: center;
+  height: 30px;
+}
+
+.noData-img {
+  display: flex;
+  margin: 0 auto;
+  padding-top: 50px;
+}
+.noData-found {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.noData-found img {
+  width: 50px;
+  height: 50px;
+}
+
+@media screen and (max-width: 600px) {
+  .noData-found h2 {
+    font-size: 16px;
+  }
+  .noData-found img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .noData-img {
+    width: 250px;
+    margin: 0;
+  }
+}
+
+.reloadTxt {
+  cursor: pointer;
+  color: #8cc751;
+}
+
+.detailParent-container {
+  height: auto;
+  width: 100%;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  border-radius: 5px;
+  padding: 50px;
+}
+
+.flightDetails {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.flightDetails-header {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.centered-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.centered-image img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.footer-container {
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 50px;
+  flex-wrap: wrap;
+  border-radius: 5px;
+}
+
+.footer-destination {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.back-btn {
+  color: #6495ed;
+  cursor: pointer;
 }

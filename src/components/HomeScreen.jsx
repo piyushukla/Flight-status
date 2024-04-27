@@ -18,10 +18,11 @@ const HomeScreen = () => {
   useEffect(() => {
     if (!loading) {
       setFilteredFlights([...data]);
+      setFlightList([...data])
       setError(error);
       setShowLoading(loading);
     }
-  }, [flightList, loading, error]);
+  }, [data, loading, error]);
 
   const fetchData = async () => {
     try {
@@ -57,6 +58,7 @@ const HomeScreen = () => {
 
   const handleSearch = (value) => {
     if (value.trim() === "") {
+      setShowLoading(false);
       return setFilteredFlights([...flightList]);
     }
     const filteredFlights = flightList.filter(
@@ -66,7 +68,6 @@ const HomeScreen = () => {
         flight
     );
     setFilteredFlights([...filteredFlights]);
-    setShowLoading(false);
   };
 
   const listReload = () => {

@@ -76,9 +76,14 @@ code {
   align-items: center;
   gap: 30px;
 }
+
+.flight-entry p {
+  color: #626971;
+  font-size: 1rem;
+}
 .airline-title {
   color: #626971;
-  font-size: 0.75rem;
+  font-size: 1rem;
   line-height: 1.25rem;
   margin-right: 0.75rem;
   width: max-content;
@@ -90,7 +95,7 @@ code {
 
 .flight-no {
   color: #626971;
-  font-size: 0.75rem;
+  font-size: 1rem;
   line-height: 1.25rem;
 }
 .destination-txt {
@@ -99,13 +104,31 @@ code {
   line-height: 1.75rem;
 }
 
+.flight-StatusBtn {
+  width: auto;
+  height: auto;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.flight-StatusBtnDetail {
+  width: auto;
+  height: auto;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .flight-status {
-  color: #05203c;
+  color: #ffffff !important;
   display: inline-block;
   font-size: 1rem;
   line-height: 1.5rem;
   text-align: center;
   height: 30px;
+  border: none;
+  margin: 5px;
 }
 
 .noData-img {
@@ -163,6 +186,12 @@ code {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+.flightDetails-status {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .centered-image {

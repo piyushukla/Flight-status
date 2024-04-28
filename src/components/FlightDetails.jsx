@@ -1,26 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  getCurrentTime,
-  getTimeFromDateString,
-  getStatusColor,
-} from "../utility";
-import useFlightApi from "../Apis";
+import { getStatusColor } from "../utility/color";
+import { getTimeFromDateString,getCurrentTime } from "../utility/time";
+import { GetFlightDetails } from "../api/useGetFlightDetails";
 
 const FlightDetails = () => {
   const history = useNavigate();
-  const [flightDetails, setFlightDetails] = useState([]);
-  const [errorApi, setErrorApi] = useState(null); // State to store error information
   const { id } = useParams();
 
-  const { data, error = null } = useFlightApi(
-    `https://flight-status-mock.core.travelopia.cloud/flights/${id}`
-  );
-
-  useEffect(() => {
-    setFlightDetails(data);
-    setErrorApi(error);
-  }, [data, error]); // Include 'id' in dependency array to fetch data when 'id' changes
+  const { data, error = null } = GetFlightDetails({ id });
 
   const navigateFlightList = () => {
     history("/");
@@ -29,8 +17,8 @@ const FlightDetails = () => {
   return (
     <div className="bg-container">
       <div className="container-main">
-        {errorApi ? (
-          <p>There was an error: {errorApi}</p>
+        {error ? (
+          <p>There was an error: {error}</p>
         ) : (
           <div className="detailParent-container">
             {/* flight heading */}
@@ -38,24 +26,19 @@ const FlightDetails = () => {
               Back
             </p>
             <div className="flightDetails-header">
-              <p className="flightDetails">{flightDetails?.flightNumber} :</p>
+              <p className="flightDetails">{data?.flightNumber} :</p>
               <p className="flightDetails">
-                {flightDetails?.origin} {"->"} {flightDetails?.destination}{" "}
+                {data?.origin} {"->"} {data?.destination}{" "}
               </p>
             </div>
-            <div
-              className="flightDetails-header"
-              style={{ justifyContent: "space-between" }}
-            >
-              <p className="flightDetails">{flightDetails?.airline}</p>
-              <p
-                className="flightDetails"
-                style={{
-                  color: getStatusColor(flightDetails?.status),
-                }}
+            <div className="flightDetails-status">
+              <p className="flightDetails">{data?.airline}</p>
+              <div
+                className="flight-StatusBtnDetail"
+                style={{ background: getStatusColor(data?.status) }}
               >
-                {flightDetails?.status}
-              </p>
+                <p className="flight-status">{data?.status}</p>
+              </div>
             </div>
 
             <div className="centered-image">
@@ -67,11 +50,11 @@ const FlightDetails = () => {
             <div className="footer-container">
               <div>
                 <label className="footer-destination">Destination</label>
-                <p>{flightDetails?.destination}</p>
+                <p>{data?.destination}</p>
               </div>
               <div>
                 <label className="footer-destination">Departure Time</label>
-                <p>{getTimeFromDateString(flightDetails?.departureTime)}</p>
+                <p>{getTimeFromDateString(data?.departureTime)}</p>
               </div>
               <div>
                 <label className="footer-destination">Estimate Arrival</label>

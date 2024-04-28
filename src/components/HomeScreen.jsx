@@ -1,26 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FlightList from "./FlightList";
-import useFlightApi from "../Apis";
+import { GetFlightList } from "../api/useGetFlightList";
 
 const HomeScreen = () => {
   const history = useNavigate();
+  const { data, loading, error } = GetFlightList();
 
-  const [flightList, setFlightList] = useState([]);
   const [filteredFlights, setFilteredFlights] = useState([]);
   const [errorApi, setError] = useState(null); // State to store error information
-  const [showLoading, setShowLoading] = useState(true);
-
-  const { data, loading, error } = useFlightApi(
-    "https://flight-status-mock.core.travelopia.cloud/flights"
-  );
+  const [searchInput, setSearchInput] = useState("");
+  const [showLoadingMsg, setShowLoadingMsg] = useState(false);
 
   useEffect(() => {
     if (!loading) {
       setFilteredFlights([...data]);
-      setFlightList([...data])
       setError(error);
-      setShowLoading(loading);
     }
   }, [data, loading, error]);
 
@@ -30,25 +25,32 @@ const HomeScreen = () => {
         "https://flight-status-mock.core.travelopia.cloud/flights"
       );
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error(
+          "There was an error reaching to our server. Please try again later"
+        );
       }
       const data = await response.json();
       setFilteredFlights([...data]);
-      setShowLoading(false);
+      setShowLoadingMsg(false);
     } catch (error) {
       setError(error.message);
-      setShowLoading(false);
+      setShowLoadingMsg(false);
     }
   };
-
+  
   useEffect(() => {
     const intervalId = setInterval(() => {
       // Fetch data every 30 seconds
       fetchData();
+      setShowLoadingMsg(true);
     }, 10000);
 
     return () => clearInterval(intervalId); // Cleanup function to clear interval on component unmount
   }, []);
+
+  useEffect(() => {
+    setShowLoadingMsg(false);
+  }, [data]); // Hide loading message when data changes
 
   const handleFlightClick = (id) => {
     history(`/details/${id}`);
@@ -57,11 +59,11 @@ const HomeScreen = () => {
   // Api call for list of flights
 
   const handleSearch = (value) => {
+    setSearchInput(value);
     if (value.trim() === "") {
-      setShowLoading(false);
-      return setFilteredFlights([...flightList]);
+      return setFilteredFlights([...data]);
     }
-    const filteredFlights = flightList.filter(
+    const filteredFlights = data.filter(
       (flight) =>
         (flight.airline.toLowerCase().startsWith(value.toLowerCase()) ||
           flight.flightNumber.toLowerCase().startsWith(value.toLowerCase())) &&
@@ -71,8 +73,8 @@ const HomeScreen = () => {
   };
 
   const listReload = () => {
-    setFilteredFlights([...flightList]);
-    document.getElementById("searchInput").value = "";
+    setFilteredFlights([...data]);
+    setSearchInput("");
   };
 
   return (
@@ -87,42 +89,49 @@ const HomeScreen = () => {
           className="inputSearch"
           onChange={(e) => handleSearch(e.target.value)}
           placeholder="Search for Airlines"
-          id="searchInput"
+          value={searchInput}
         />
-        {errorApi ? ( // Display error message if there's an error
+        {errorApi && ( // Display error message if there's an error
           <div>
             <p>There was an error: {errorApi}</p>
           </div>
-        ) : filteredFlights.length === 0 ? (
-          <>
-            <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDC--9Yyr-D39Xz483ujSkJmaZoR2Wt0tH6HI26JF0lw&s"
-              alt="noFlight"
-              className="noData-img"
-            />
-            <div className="noData-found">
-              <h2>{showLoading ? "Data Loading...." : "No Data Found...."} </h2>
-              {!showLoading && (
-                <img
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSy-U92_4HxzsNRM_LYgEtG_DJ2rCBFjKvgb1TzrDETfg&s"
-                  alt="sad emoji"
-                />
-              )}
-            </div>
-            <p onClick={listReload} className="reloadTxt">
-              Back to flight list
-            </p>
-          </>
+        )}
+        {loading || showLoadingMsg ? (
+          <p>Refreshing flight data...</p>
         ) : (
           <>
-            {filteredFlights.map((data, index) => (
-              <FlightList
-                key={index}
-                flightData={data}
-                index={index}
-                handleFlightClick={(id) => handleFlightClick(id)}
-              />
-            ))}
+            {filteredFlights.length === 0 ? (
+              <>
+                <img
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDC--9Yyr-D39Xz483ujSkJmaZoR2Wt0tH6HI26JF0lw&s"
+                  alt="noFlight"
+                  className="noData-img"
+                />
+                <div className="noData-found">
+                  <h2>No Data Found....</h2>
+                  <img
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSy-U92_4HxzsNRM_LYgEtG_DJ2rCBFjKvgb1TzrDETfg&s"
+                    alt="sad emoji"
+                  />
+                </div>
+                {!loading && (
+                  <p onClick={listReload} className="reloadTxt">
+                    Back to flight list
+                  </p>
+                )}
+              </>
+            ) : (
+              <>
+                {filteredFlights.map((data, index) => (
+                  <FlightList
+                    key={index}
+                    flightData={data}
+                    index={index}
+                    handleFlightClick={(id) => handleFlightClick(id)}
+                  />
+                ))}
+              </>
+            )}
           </>
         )}
       </div>

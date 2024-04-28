@@ -1,17 +1,14 @@
 import React from "react";
-import { AIRLINES_LOGOS } from "../Constant";
-import {
-  formatDateTime,
-  generateRandomNumber,
-  getStatusColor,
-} from "../utility";
+import { AIRLINES_LOGOS } from "../flight-logos";
+import { getStatusColor } from "../utility/color";
+import { formatDateTime, generateRandomNumber } from "../utility/time";
 
 const FlightList = ({ flightData = [], index = 0, handleFlightClick }) => {
   return (
     <>
       <div
         className="data-container"
-        style={{ marginTop: index === 0 && "50px" }}
+        style={{ marginTop: index === 0 ? "50px" : "0px" }}
         onClick={() => handleFlightClick(flightData?.id)}
       >
         {/* Flight Namm */}
@@ -34,12 +31,12 @@ const FlightList = ({ flightData = [], index = 0, handleFlightClick }) => {
         {/* Flight Status */}
         <div className="flight-entry">
           {" "}
-          <p
-            className="flight-status"
-            style={{ color: getStatusColor(flightData?.status) }}
+          <div
+            className="flight-StatusBtn"
+            style={{ background: getStatusColor(flightData?.status) }}
           >
-            {flightData?.status}
-          </p>
+            <p className="flight-status">{flightData?.status}</p>
+          </div>
           <p className="destination-txt">{flightData?.destination}</p>
         </div>
       </div>
